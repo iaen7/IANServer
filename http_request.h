@@ -71,7 +71,7 @@ typedef struct ian_http_header{
     void* key_end;
     void* value_start;
     void* value_end;
-    struct list_head list;
+    list_head_t list;
 }ian_http_header_t;
 
 typedef int (*ian_http_header_handler_func)(ian_http_request_t* request, 
@@ -90,4 +90,4 @@ int ian_init_request_t(ian_http_request_t* request, int fd, int epfd, char* path
 int ian_init_out_t(ian_http_out_t* out, int fd);
 const char* get_shortmsg_from_status_code(int status_code);
 
-#endif
+#endif 
