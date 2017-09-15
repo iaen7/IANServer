@@ -20,13 +20,6 @@
 #define MAXLINE 8192
 #define SHORTLINE 512
 
-#define ian_str3_cmp(m, c0, c1, c2, c3)         \
-    *(uint32_t *) m == ((c3 << 24) | (c2 << 16) | (c1 << 8) | c0)
-#define ian_str3Ocmp(m, c0, c1, c2, c3)         \
-    *(uint32_t *) m == ((c3 << 24) | (c2 << 16) | (c1 << 8) | c0)
-#define ian_str4cmp(m, c0, c1, c2, c3)         \
-    *(uint32_t *) m == ((c3 << 24) | (c2 << 16) | (c1 << 8) | c0)
-
 //表示mime_type_t
 typedef struct mime_type{
     const char* type;
