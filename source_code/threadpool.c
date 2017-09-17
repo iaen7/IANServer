@@ -15,6 +15,7 @@ int threadpool_free(ian_threadpool_t *pool){
         pool->head->next = pool->head->next->next;
         free(old);
     }
+    free(pool->head);
     return 0;
 }
 
@@ -110,9 +111,8 @@ ian_threadpool_t *threadpool_init(int thread_num){
     pool->queue_size = 0;
     pool->shutdown = 0;
     pool->started = 0;
-    pool->threads = (pthread_t*)malloc(sizeof(pthread_t))
-    pthread_mutex_init(&(pool->lock), NULL);
-    pool->pthreads = malloc(sizeof(pthread_t) * thread_num);
+    //pthread_mutex_init(&(pool->lock), NULL);
+    pool->pthreads = (pthread_t*)malloc(sizeof(pthread_t) * thread_num);
 
     pool->head = (ian_job_t *)malloc(sizeof(ian_job_t));
     if(pool->pthreads == NULL || pool->head == NULL){
@@ -140,7 +140,7 @@ ian_threadpool_t *threadpool_init(int thread_num){
     }
 
     for(int i=0; i<thread_num; i++){
-        if(pthread_create(&(pool->thread[i]), NULL, threadpool_worker, (void*)pool) != 0){
+        if(pthread_create(&(pool->pthreads[i]), NULL, threadpool_worker, (void*)pool) != 0){
             threadpool_destory(pool,0);
             return NULL;
         }
@@ -156,19 +156,19 @@ int threadpool_add(ian_threadpool_t* pool, void (*func)(void*), void *arg){
         return -1;
     
     if(pthread_mutex_lock(&(pool->lock))!=0)
-        return -1;
+        return ian_tp_lock_fail;
 
     if(pool->shutdown){
         err = ian_tp_already_shutdown;
         if(pthread_mutex_unlock(&(pool->lock)) !=0)
-            return -1;
+            return ian_tp_lock_fail;
         return err;
     }
 
     ian_job_t *job = (ian_job_t*)malloc(sizeof(ian_job_t));
     if(job == NULL){
         if(pthread_mutex_unlock(&(pool->lock)) !=0)
-            return -1;
+            return ian_tp_lock_fail;
         return err;
     }
     job->func = func;
@@ -178,7 +178,7 @@ int threadpool_add(ian_threadpool_t* pool, void (*func)(void*), void *arg){
     pool->queue_size++;
 
     if(pthread_mutex_unlock(&(pool->lock)) !=0)
-            return -1;
+            return ian_tp_lock_fail;
     pthread_cond_signal(&(pool->cond));
     return err;
 }

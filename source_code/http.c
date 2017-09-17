@@ -208,10 +208,10 @@ void do_request(void * ptr){
         //处理响应错误
         if(error_proess(&stat, filename, fd))
             continue;
-
+        //处理请求头
         ian_http_handle_header(request, out);
 
-        //获取请求文件类型
+        //获取文件最后一次修改时间
         out->mtime = stat.st_mtime;
 
         //处理静态文件

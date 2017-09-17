@@ -27,7 +27,7 @@ int ian_timer_init(){
 
 int ian_find_timer(){
     int time;
-    //返回队列中最早时间和当前时间只差
+    //返回队列中最早时间和当前时间之差
     while(!ian_pq_is_empty(&ian_timer)){
         ian_time_update();
         ian_timer_t* timer_node = (ian_timer_t*)ian_pq_min(&ian_timer);

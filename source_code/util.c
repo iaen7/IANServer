@@ -107,5 +107,13 @@ int accept_connection(int listenfd, int epfd, char *path){
         return -1;
     }
     set_non_blocking(clientfd);
+    // 申请ian_http_request_t类型节点并初始化
+    ian_http_request_t* request = (ian_http_request_t*)malloc(sizeof(ian_http_request_t));
+    ian_init_request_t(request, accept_fd, epoll_fd, path);
 
+    // 文件描述符可以读，边缘触发(Edge Triggered)模式，保证一个socket连接在任一时刻只被一个线程处理
+    ian_epoll_add(epoll_fd, accept_fd, request, (EPOLLIN | EPOLLET | EPOLLONESHOT));
+
+    // 新增时间信息
+    ian_add_timer(request, TIMEOUT_DEFAULT, ian_http_close_conn);
 }
