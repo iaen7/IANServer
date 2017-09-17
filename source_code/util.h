@@ -10,9 +10,9 @@
 #define IAN_CONF_ERROR -1
 
 typedef struct ian_conf{
-    char root[PATH];
-    int port;
-    int thd_num;
+    char root[PATH]; //根目录
+    int port;   //端口号
+    int thd_num;    //线程数
 } ian_conf_t;
 
 int read_conf(char *filename, ian_conf_t * conf);
